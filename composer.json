@@ -1,0 +1,6 @@
+{
+    "name": "root/gmailapiexample",
+    "require": {
+        "google/apiclient": "^2.0"
+    }
+}
