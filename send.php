@@ -26,10 +26,11 @@
 	}
 
 	// set client auth params
+	// get credentials from your Google Developer account
 	$gClientId = "<your oauth client id>";
 	$gClientSecret = "<your oauth client secret>";
 	$gRedirectUri = "<your oauth redirect uri>";
-	   
+
 	// create Client Request to access Google API
 	$client = new Client();
 	$client->setClientId($gClientId);

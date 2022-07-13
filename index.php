@@ -25,6 +25,7 @@
 	}
 	
 	// set client auth params
+	// get credentials from your Google Developer account
 	$gClientId = "<your oauth client id>";
 	$gClientSecret = "<your oauth client secret>";
 	$gRedirectUri = "<your oauth redirect uri>";
@@ -93,7 +94,7 @@
 	   	// pagination test
 	   	// note : pagination only works for next or previous page. jump to specific page number is not allowed by API.
 	   	
-		$pageTo = "next"; // 'next', 'prev', or empty string. if empty, it will stay in current page.
+		$pageTo = ""; // 'next', 'prev', or empty string. if empty, it will stay in current page.
 		if($pageTo == "next"){
 			$_SESSION['current_page']++;
 		} 
@@ -104,8 +105,9 @@
 	    // set options parameter
 	    $optParams = [];
 		$optParams['maxResults'] = 2;
-		$optParams['labelIds'] = 'INBOX';
+		$optParams['labelIds'] = 'INBOX'; // label name
 		$optParams['pageToken'] = $_SESSION['page_token_list'][$_SESSION['current_page']]['token'];
+		$optParams['q'] = "After:2022/07/08 Before:2022/07/09"; // search filter. works exactly same as Gmail search bar query
 
 		// get messages
 		$messages = $gmail->users_messages->listUsersMessages($user,$optParams);
@@ -127,6 +129,9 @@
 
 			// get message
 			$message = $gmail->users_messages->get('me',$msg->getId(),$optParamsGet);
+
+			// get message snippet (max. 50 characters)
+			$snippet = $message->getSnippet();
 			
 			// get message payload
 			$messagePayload = $message->getPayload();
@@ -148,9 +153,9 @@
 			// save messages body to array
 			$showMessages[$index]['id'] = $msg->getId();
 			$showMessages[$index]['headers'] = $showHeaders; 
+			$showMessages[$index]['snippet'] = $snippet;
 			$showMessages[$index]['body'] = decodeEmailData($body->data);
         }
-
 	}
 	catch(Exception $e) {
 	    // TODO(developer) - handle error appropriately
@@ -191,13 +196,16 @@
 						Subject : <?=$msg['headers']['Subject']?> 
 					</div>
 					<div>
-						From : <?=$msg['headers']['From']?> 
+						From : <?=$msg['headers']['From']?> (<?=$msg['headers']['Reply-To']?>) 
 					</div>
 					<div>
-						To : <?=$msg['headers']['To']?> 
+						To : <?=$msg['headers']['To']?>
 					</div>
 					<div>
 						Date : <?=$msg['headers']['Date']?> 
+					</div>
+					<div>
+						Snippet : <?=$msg['snippet']?>
 					</div>
 				</div>
 				<div>
