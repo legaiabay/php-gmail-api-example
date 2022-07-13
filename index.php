@@ -3,7 +3,7 @@
 
 	use Google\Client;
 	use Google\Service\Gmail;
-	use Google\SErvice\Gmail\Message;
+	use Google\Service\Gmail\Message;
 
 	if(!isset($_SESSION)) session_start();
 
